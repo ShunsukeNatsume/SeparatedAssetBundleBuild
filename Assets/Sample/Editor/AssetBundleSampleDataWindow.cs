@@ -72,7 +72,8 @@ namespace Sample
             if (isSeparate)
             {
                 UTJ.SeparatedAssetBundleBuild.ReservedVariants = testVariants;
-                UTJ.SeparatedAssetBundleBuild.BuildAssetBundles(outputDir, assetBundleBuildOption, targetPlatform);
+                var manifest = UTJ.SeparatedAssetBundleBuild.BuildAssetBundles(outputDir, assetBundleBuildOption, targetPlatform);
+				UTJ.SeparatedAssetBundleBuild.BuildSingleManifest(outputDir, "Assets", "SingleManifest", manifest, assetBundleBuildOption, targetPlatform);
             }
             else
             {

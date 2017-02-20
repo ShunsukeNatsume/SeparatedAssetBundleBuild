@@ -28,7 +28,7 @@ namespace UTJ
             float startTime = Time.realtimeSinceStartup;
 #endif
 
-            AssetBundleBuildsManifest manifest = new AssetBundleBuildsManifest();
+			AssetBundleBuildsManifest manifest = ScriptableObject.CreateInstance<AssetBundleBuildsManifest>();
 
             AssetBundleManifest unityManifest = null;
             // append
@@ -110,7 +110,7 @@ namespace UTJ
                 "GroupingTime:" + (groupingComplete - startTime) + "sec\n" +
                 "AssetBundleBuild:" + (buildCompleteTime - groupingComplete) + "sec\n");
 #endif
-            return manifest;
+			return manifest.Copy();
         }
 #if ASSET_BUNDLE_GROUPING_DEBUG
         private static void DebugPrintBuildPipeline(List<AssetBundleBuild> buildTargetBuffer)
@@ -289,6 +289,17 @@ namespace UTJ
                 }
             }
         }
+
+		public static void BuildSingleManifest(string outputBundleDir, string outputAssetDir, string manifestBundleName, AssetBundleBuildsManifest manifest, BuildAssetBundleOptions buildOption, BuildTarget targetPlatform){
+			string manifestAssetPath = System.IO.Path.Combine(outputAssetDir, manifestBundleName);
+			manifestAssetPath += ".asset";
+			AssetDatabase.CreateAsset(manifest, manifestAssetPath);
+			AssetDatabase.SaveAssets();
+			AssetBundleBuild build = new AssetBundleBuild();
+			build.assetBundleName = manifestBundleName;
+			build.assetNames = new string[]{ manifestAssetPath };
+			BuildPipeline.BuildAssetBundles(outputBundleDir, new AssetBundleBuild[] { build }, buildOption, targetPlatform);
+		}
 
     }
 
